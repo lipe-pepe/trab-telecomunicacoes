@@ -48,6 +48,8 @@ def reiniciar_jogo():
     y_item = randint(50, 430)
     game_over = False
 
+todas_as_sprites = pygame.sprite.Group()
+
 # --- PLAYER -------------------------------------------------------------------------------------------------------------------- #
 
 # A classe player herda da classe Sprite.
@@ -55,7 +57,31 @@ class Player(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
         self.walk_down_sprites = []
-        self.walk_down_sprites.append(pygame.image.load('sprites\player\walk\down_0.png'))
+        self.walk_down_sprites.append(pygame.image.load('sprites/player/walk/down_0.png'))
+        self.walk_down_sprites.append(pygame.image.load('sprites/player/walk/down_1.png'))
+        self.walk_down_sprites.append(pygame.image.load('sprites/player/walk/down_2.png'))
+        self.walk_down_sprites.append(pygame.image.load('sprites/player/walk/down_3.png'))
+        self.sprites_index = 0
+        self.image = self.walk_down_sprites[self.sprites_index]
+        self.image = pygame.transform.scale(self.image, (32*3,32*3))
+ 
+        self.animate = True
+        self.animation_speed = 0.25
+
+        self.rect = self.image.get_rect()
+        self.rect.topleft = 100, 100
+    
+    def update(self):
+        if self.animate == True:
+            self.sprites_index = self.sprites_index + self.animation_speed
+            if self.sprites_index >= len(self.walk_down_sprites):
+                self.sprites_index = 0
+            self.image = self.walk_down_sprites[int(self.sprites_index)]
+            self.image = pygame.transform.scale(self.image, (32*3,32*3))
+
+player = Player()
+
+todas_as_sprites.add(player)
 
 # Variáveis do jogador:
 x_player = largura_janela/2
@@ -134,6 +160,9 @@ while True:
                     if "baixo" in comando_voz:   
                         direcaoX = 0
                         direcaoY = 1
+
+    todas_as_sprites.draw(tela)
+    todas_as_sprites.update()   
 
 
     player = pygame.draw.rect(tela, (0,255,128), (x_player, y_player, 20, 20))
