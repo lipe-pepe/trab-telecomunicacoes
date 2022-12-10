@@ -32,7 +32,7 @@ diretorio_imagens = os.path.join(diretorio_principal, 'imagens')
 largura_janela = 640
 altura_janela = 480
 
-tela = pygame.display.set_mode((largura_janela, altura_janela))
+screen = pygame.display.set_mode((largura_janela, altura_janela))
 
 # Configura o nome da janela
 titulo = "Trabalho Telecomunicações"
@@ -59,6 +59,46 @@ obstacles_group.add(box)
 player = Player(spritesheet)
 all_sprites.add(player)
 
+def bouncing_rect():
+    global x_speed, y_speed, other_speed
+    moving_rect.x += x_speed
+    moving_rect.y += y_speed
+
+    #collision_with screen borders:
+    if moving_rect.right >= largura_janela or moving_rect.left <= 0: 
+        x_speed = x_speed*-1
+    if moving_rect.bottom >= altura_janela or moving_rect.top <= 0: 
+        y_speed = y_speed*-1
+
+    #moving the other rect:
+    other_rect.y += other_speed
+    if other_rect.top <= 0 or other_rect.bottom >= altura_janela:
+        other_speed *= -1
+
+    #collision with rect:
+    colision_tolerance = 10
+    if moving_rect.colliderect(other_rect):
+        if abs(other_rect.top - moving_rect.bottom) < colision_tolerance and y_speed > 0:
+            y_speed *= -1
+        if abs(other_rect.bottom - moving_rect.top) < colision_tolerance and y_speed < 0:
+            y_speed *= -1
+        if abs(other_rect.right - moving_rect.left) < colision_tolerance and x_speed <   0:
+            x_speed *= -1
+        if abs(other_rect.left - moving_rect.right) < colision_tolerance and x_speed > 0:
+            x_speed *= -1
+
+    pygame.draw.rect(screen, (255, 0, 0), moving_rect) #teste
+    pygame.draw.rect(screen, (255, 255, 0), other_rect) #teste
+
+
+# TESTES -----
+
+moving_rect = pygame.Rect(30, 30, 100, 100)
+x_speed = 5
+y_speed = 4
+
+other_rect = pygame.Rect(200, 300, 400, 400)
+other_speed = 2
 
 
 # ----------------------------------------------------------------------------------------------------------------------- #
@@ -66,8 +106,8 @@ all_sprites.add(player)
 # Cria o loop do jogo
 while True:
     clock.tick(30)
-    # Limpa a tela do jogo:
-    tela.fill((255,255,240))
+    # Limpa a screen do jogo:
+    screen.fill((255,255,240))
 
     # A cada iteração do loop principal, o loop a seguir vai checar os eventos
     for event in pygame.event.get():     
@@ -113,15 +153,17 @@ while True:
     # Checa colisões
     colisions = pygame.sprite.spritecollide(player, obstacles_group, False) 
     if colisions:
-        player.dirX = 0
-        player.dirY = 0 
+        player.dirX *= -1
+        player.dirY *= -1 
     
     # Movimentação do personagem        
     player.rect.y = player.rect.y+(player.speed*player.dirY)
     player.rect.x = player.rect.x+(player.speed*player.dirX)
 
-    all_sprites.draw(tela)
+    # bouncing_rect() #teste
+
+    all_sprites.draw(screen)
     all_sprites.update()
 
-    # Atualiza a tela a cada iteração do loop principal
+    # Atualiza a screen a cada iteração do loop principal
     pygame.display.update()

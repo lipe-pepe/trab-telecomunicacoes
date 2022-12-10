@@ -44,9 +44,6 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.topleft = 100,100
 
-        # Cria a máscara de colisão pixel perfect
-        self.mask = pygame.mask.from_surface(self.image)
-
         # Movimentação
         self.speed = 5
         self.dirX = 0
