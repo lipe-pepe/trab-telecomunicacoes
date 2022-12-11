@@ -39,7 +39,7 @@ class Player(pygame.sprite.Sprite):
         self.current_animation = self.walk_down_sprites
 
         self.animate = True
-        self.animation_speed = 0.25
+        self.animation_speed = 0.35
  
         self.rect = self.image.get_rect()
         self.rect.topleft = 100,100
@@ -48,6 +48,9 @@ class Player(pygame.sprite.Sprite):
         self.speed = 5
         self.dirX = 0
         self.dirY = 0
+
+        self.comandos = []
+        self.index_comando = 0
 
     def update(self):
         if self.animate == True:
@@ -69,3 +72,6 @@ class Player(pygame.sprite.Sprite):
                 self.animation_index = 0
             self.image = self.current_animation[int(self.animation_index)]
             self.image = pygame.transform.scale(self.image, (32*3, 32*3))
+
+
+    
