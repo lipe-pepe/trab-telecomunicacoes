@@ -73,5 +73,10 @@ class Player(pygame.sprite.Sprite):
             self.image = self.current_animation[int(self.animation_index)]
             self.image = pygame.transform.scale(self.image, (32*3, 32*3))
 
+    def stop(self):
+        self.dirX = 0
+        self.dirY = 0
+        self.current_animation = self.idle_sprites
+
 
     

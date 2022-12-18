@@ -112,8 +112,8 @@ def movement_manager():
         if player.rect.left <= 0 or player.rect.right >= largura_janela or player.rect.top <= 0 or player.rect.bottom >= altura_janela:
             print("COLIDIU!")
             move()
-    # else:
-        # Parar o player
+    else:
+        player.stop()
 
 
 def bouncing_rect():
