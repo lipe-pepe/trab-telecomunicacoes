@@ -48,6 +48,7 @@ game_over = False
 
 all_sprites = pygame.sprite.Group()
 obstacles_group = pygame.sprite.Group()
+phone_group = pygame.sprite.Group()
 
 # Carrega a spritesheet conservando a transparência do alpha.
 spritesheet = pygame.image.load(os.path.join(diretorio_imagens, 'Spritesheet.png')).convert_alpha()
@@ -60,6 +61,7 @@ obstacles_group.add(box)
 
 phone = Phone(spritesheet)
 all_sprites.add(phone)
+phone_group.add(phone)
 
 player = Player(spritesheet)
 all_sprites.add(player)
@@ -70,8 +72,18 @@ all_sprites.add(enemy)
 # --- Controle de voz ---
 
 index_comando = 0
+numero_comandos = 0
 comandos = []
 collided = False
+
+def voice_command_manager():
+    global comandos, index_comando, numero_comandos
+    comando_voz = ouvir_microfone()
+    comandos = definir_comandos_jogo(comando_voz)
+    index_comando = 0
+    numero_comandos = len(comandos)
+    move()
+
 
 def move():
     global comandos, index_comando, player
@@ -79,7 +91,7 @@ def move():
     print(comandos)
     comando_atual = comandos[index_comando]
     index_comando += 1
-    if index_comando >= 3:
+    if index_comando >= numero_comandos:
         index_comando = 0
         comandos = []
     # Checa todos os comandos possíveis
@@ -104,59 +116,14 @@ def movement_manager():
         colisions = pygame.sprite.spritecollide(player, obstacles_group, False) 
         if colisions and collided == False:
             collided = True
-            print("COLIDIU!")
             move()       
         if not colisions:
             collided = False
 
         if player.rect.left <= 0 or player.rect.right >= largura_janela or player.rect.top <= 0 or player.rect.bottom >= altura_janela:
-            print("COLIDIU!")
             move()
     else:
         player.stop()
-
-
-def bouncing_rect():
-    global x_speed, y_speed, other_speed
-    moving_rect.x += x_speed
-    moving_rect.y += y_speed
-
-    #collision_with screen borders:
-    if moving_rect.right >= largura_janela or moving_rect.left <= 0: 
-        x_speed = x_speed*-1
-    if moving_rect.bottom >= altura_janela or moving_rect.top <= 0: 
-        y_speed = y_speed*-1
-
-    #moving the other rect:
-    other_rect.y += other_speed
-    if other_rect.top <= 0 or other_rect.bottom >= altura_janela:
-        other_speed *= -1
-
-    #collision with rect:
-    colision_tolerance = 10
-    if moving_rect.colliderect(other_rect):
-        if abs(other_rect.top - moving_rect.bottom) < colision_tolerance and y_speed > 0:
-            y_speed *= -1
-        if abs(other_rect.bottom - moving_rect.top) < colision_tolerance and y_speed < 0:
-            y_speed *= -1
-        if abs(other_rect.right - moving_rect.left) < colision_tolerance and x_speed <   0:
-            x_speed *= -1
-        if abs(other_rect.left - moving_rect.right) < colision_tolerance and x_speed > 0:
-            x_speed *= -1
-
-    pygame.draw.rect(screen, (255, 0, 0), moving_rect) #teste
-    pygame.draw.rect(screen, (255, 255, 0), other_rect) #teste
-
-
-# TESTES -----
-
-moving_rect = pygame.Rect(30, 30, 100, 100)
-x_speed = 5
-y_speed = 4
-
-other_rect = pygame.Rect(200, 300, 400, 400)
-other_speed = 2
-
 
 # ----------------------------------------------------------------------------------------------------------------------- #
 
@@ -192,23 +159,19 @@ while True:
                 player.dirY = -1
             if event.key == K_SPACE:
                 # --- Ouve o comando por voz ---
-                comando_voz = ouvir_microfone()
-                comandos = definir_comandos_jogo(comando_voz)
-                move()
+                voice_command_manager()
                     
-
     # Checa colisões
-    # colisions = pygame.sprite.spritecollide(player, obstacles_group, False) 
-    # if colisions:
-    #     player.dirX *= -1
-    #     player.dirY *= -1 
+    if (not colision_phone):
+        colision_phone = pygame.sprite.spritecollide(player, phone_group, False) 
+        if colision_phone:
+            voice_command_manager()
+        
     movement_manager()
     
     # Movimentação do personagem        
     player.rect.y = player.rect.y+(player.speed*player.dirY)
     player.rect.x = player.rect.x+(player.speed*player.dirX)
-
-    # bouncing_rect() #teste
 
     all_sprites.draw(screen)
     all_sprites.update()

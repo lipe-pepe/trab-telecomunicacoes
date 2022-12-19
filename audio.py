@@ -41,11 +41,13 @@ def ouvir_microfone():
 # Função que vai separar 3 comandos da fala lida pelo microfone. Os comandos devem ser os comandos de jogo.
 def definir_comandos_jogo(frase):
     comandos_jogo = ['esquerda','direita','cima', 'baixo']
-    array = frase.split(" ")
-    comandos = []
-    for palavra in array:
-        if palavra in comandos_jogo and len(comandos) < 3:
-            comandos.append(palavra)
-    return comandos
+    if (frase):
+        array = frase.split(" ")
+        comandos = []
+        for palavra in array:
+            if palavra in comandos_jogo and len(comandos) < 3:
+                comandos.append(palavra)
+        return comandos
+    
 
 
