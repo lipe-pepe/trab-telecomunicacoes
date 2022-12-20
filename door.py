@@ -1,11 +1,11 @@
 import pygame
 from pygame.locals import *
 
-class Box(pygame.sprite.Sprite):
+class Door(pygame.sprite.Sprite):
     def __init__(self, spritesheet, posX, posY):
         pygame.sprite.Sprite.__init__(self)
 
-        self.image = spritesheet.subsurface((0, 6*32), (32, 32))
+        self.image = spritesheet.subsurface((9*32, 0), (32, 32))
 
         self.rect = self.image.get_rect()
         self.rect.topleft = posX, posY
@@ -15,5 +15,3 @@ class Box(pygame.sprite.Sprite):
 
     def setPos(self, x, y):
         self.rect.topleft = x, y
-    
-    

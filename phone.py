@@ -2,14 +2,14 @@ import pygame
 from pygame.locals import *
 
 class Phone(pygame.sprite.Sprite):
-    def __init__(self, spritesheet):
+    def __init__(self, spritesheet, posX, posY):
         pygame.sprite.Sprite.__init__(self)
         self.current_animation = []
 
         self.image = spritesheet.subsurface((0, 6*32), (32, 32))
 
         self.rect = self.image.get_rect()
-        self.rect.center = 300,250
+        self.rect.topleft = posX,posY
 
         self.sprites = []
 
@@ -35,5 +35,8 @@ class Phone(pygame.sprite.Sprite):
                 self.animation_index = 0
             self.image = self.current_animation[int(self.animation_index)]
             self.image = pygame.transform.scale(self.image, (32*3, 32*3))
+
+    def setPos(self, x, y):
+        self.rect.topleft = x, y
     
     

@@ -3,7 +3,7 @@ from pygame.locals import *
 
 # A classe player herda da classe Sprite.
 class Player(pygame.sprite.Sprite):
-    def __init__(self, spritesheet):
+    def __init__(self, spritesheet, posX, posY):
         pygame.sprite.Sprite.__init__(self)
         self.current_animation = []
 
@@ -42,7 +42,7 @@ class Player(pygame.sprite.Sprite):
         self.animation_speed = 0.35
  
         self.rect = self.image.get_rect()
-        self.rect.topleft = 100,100
+        self.rect.topleft = posX,posY
 
         # Movimentação
         self.speed = 5
@@ -77,6 +77,9 @@ class Player(pygame.sprite.Sprite):
         self.dirX = 0
         self.dirY = 0
         self.current_animation = self.idle_sprites
+
+    def setPos(self, x, y):
+        self.rect.topleft = x, y
 
 
     
